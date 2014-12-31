@@ -1,0 +1,11 @@
+roots
+  src/
+  /deme/dmJs/lib/dmBasic/dmBasic/src
+  /deme/dmJs/lib/logic1/logic1/src
+  /deme/dmJs/lib/dmServer/1.2.0/src
+  /deme/dmJs/lib/dmBase/1.1.0/src
+  /deme/dmJs/lib/dmWidgets/dmWidgets/src
+namespaces
+  main
+target
+  www/propositionalLogic/index.js
