@@ -41,9 +41,9 @@ Conf = function () {
   this.lang = "en";
 
   /**
-   * @type {!number} Default view.menu.HOME()
+   * @type {!number} Default view.menu.RULE()
    */
-  this.menuOption = view.menu.HOME();
+  this.menuOption = view.menu.RULE();
 
   /**
    * @return {!Object.<!string, ?>}

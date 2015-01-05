@@ -33,7 +33,7 @@ goog.require("auth.expired");
 goog.require("auth.Log");
 goog.require("auth.passIn");
 goog.require("auth.passChange");
-goog.require("view.home");
+goog.require("view.Rule");
 goog.require("view.logout");
 goog.require("view.configuration");
 
@@ -50,7 +50,9 @@ Control = function (mainDiv) {
     /** @private @type {!Io} */
     io,
     /** @private @type {!Control} */
-    self;
+    self,
+    /** @private @type {!view.Rule} */
+    rule;
 
   self = this;
 
@@ -59,6 +61,7 @@ Control = function (mainDiv) {
 
     vars = new Vars();
     vars.log = new auth.Log(self);
+    rule = new view.Rule(self);
     dmjs.server.pass.auth(
       cons.appName(),
       "admin",
@@ -90,14 +93,14 @@ Control = function (mainDiv) {
                 vars.conf = conf;
                 i18n.get().selected = conf.lang;
                 switch (conf.menuOption) {
-                case view.menu.HOME():
-                  view.home.show(self);
+                case view.menu.RULE():
+                  rule.show();
                   break;
                 case view.menu.CONFIGURATION():
                   view.configuration.show(self);
                   break;
                 default:
-                  view.home.show(self);
+                  rule.show();
                 }
               });
             });
@@ -122,13 +125,16 @@ Control = function (mainDiv) {
   /** @return {!Io} */
   this.io = function () { return io; };
 
-  /** Shows home page */
-  this.goHome = function () {
+// Rule editor ------------------------------------------------------------
+  /** Shows rule editor */
+  this.goRule = function () {
     self.controlSession(function () {
-      vars.conf.menuOption = view.menu.HOME();
+      vars.conf.menuOption = view.menu.RULE();
       io.writeConf(self.run);
     });
   };
+
+// End Rule editor --------------------------------------------------------
 
   /** Shows configuration page */
   this.goConfiguration = function () {

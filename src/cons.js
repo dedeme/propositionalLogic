@@ -36,4 +36,25 @@ goog.require("dmjs.Session");
   /** return {!dmjs.Session} */
   ns.session = function () { return session; };
 
+  /**
+   * &#9484;
+   * @const @type {!string}
+   */
+  ns.SA = String.fromCharCode(9484);
+  /**
+   * &#9492;
+   * @const @type {!string}
+   */
+  ns.IA = String.fromCharCode(9492);
+  /**
+   * &#9472;
+   * @const @type {!string}
+   */
+  ns.HL = String.fromCharCode(9472);
+  /**
+   * &#9474;
+   * @const @type {!string}
+   */
+  ns.VL = String.fromCharCode(9474);
+
 }(cons));

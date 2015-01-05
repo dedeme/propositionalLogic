@@ -41,7 +41,7 @@ goog.require("i18n");
    * Menu option
    * @return {!number}
    */
-  ns.HOME = function () { return 1; };
+  ns.RULE = function () { return 1; };
   /**
    * Menu option
    * @return {!number}
@@ -75,11 +75,11 @@ goog.require("i18n");
     th = "padding:0px 10px 0px 10px;" +
       "background-color:#e8e8e8;border-bottom:1px solid #c9c9c9;";
 
-    tdHome = option === ns.HOME() || option === ns.NONE()
-      ? $("td").att("style", th).html(i18n._("Home"))
+    tdHome = option === ns.RULE() || option === ns.NONE()
+      ? $("td").att("style", th).html(i18n._("Rule"))
         : $("td").att("style", th + "color: #000080")
-            .add(dmjs.ui.link(function () { control.goHome(); })
-            .html(i18n._("Home")));
+            .add(dmjs.ui.link(function () { control.goRule(); })
+            .html(i18n._("Rule")));
 
     tdConfiguration = option === ns.CONFIGURATION() || option === ns.NONE()
       ? $("td").att("style", th).html(i18n._("Configuration"))

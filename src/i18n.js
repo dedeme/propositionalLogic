@@ -18,7 +18,7 @@
 
 /*globals goog, dmjs, i18n:true */
 
-/** Functions for internalización */
+/** Functions for internationalization */
 goog.provide("i18n");
 goog.require("dmjs.I18n");
 
@@ -38,7 +38,7 @@ goog.require("dmjs.I18n");
     ["Accept", "Aceptar"],
     ["Cancel", "Cancelar"],
 // view.menu
-    ["Home", "Inicio"],
+    ["Rule", "Regla"],
     ["Configuration", "Configuración"],
     ["Log out", "Cerrar sesión"],
 // view.configuration
