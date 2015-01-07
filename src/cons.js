@@ -57,4 +57,10 @@ goog.require("dmjs.Session");
    */
   ns.VL = String.fromCharCode(9474);
 
+  /** @const @type {!string} Simbols Lukasiewicz notation. ("pqrst") */
+  ns.singlePropLettersL = "pqrst";
+
+  /** @const @type {!string} Simbols Ordinary notation. ("pqrst") */
+  ns.singlePropLettersO = "pqrst";
+
 }(cons));

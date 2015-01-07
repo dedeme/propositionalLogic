@@ -46,12 +46,23 @@ Conf = function () {
   this.menuOption = view.menu.RULE();
 
   /**
+   * It can be:
+   * <pre>
+   * "L" -> Lukasiewicz
+   * "O" -> Ordinary
+   * </pre>
+   * @type {!string} Default "L" -> Lukasiewicz
+   */
+  this.readerType = "L";
+
+  /**
    * @return {!Object.<!string, ?>}
    */
   this.serialize = function () {
     return {
       "lang" : self.lang,
-      "menuOption" : self.menuOption
+      "menuOption" : self.menuOption,
+      "readerType" : self.readerType
     };
   };
 };
@@ -70,6 +81,7 @@ Conf.restore = function (serial) {
   r = new Conf();
   r.lang = serial["lang"];
   r.menuOption = serial["menuOption"];
+  r.readerType = serial["readerType"];
 
   return r;
 };

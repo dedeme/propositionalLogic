@@ -25,6 +25,7 @@ goog.provide("Control");
 goog.require("dmjs.server");
 goog.require("dmjs.server.pass");
 goog.require("dmjs.store");
+goog.require("dmjs.str");
 goog.require("cons");
 goog.require("func");
 goog.require("Vars");
@@ -36,6 +37,8 @@ goog.require("auth.passChange");
 goog.require("view.Rule");
 goog.require("view.logout");
 goog.require("view.configuration");
+goog.require("model.PropReader");
+goog.require("model.Step");
 
 /**
  * @constructor
@@ -132,6 +135,22 @@ Control = function (mainDiv) {
       vars.conf.menuOption = view.menu.RULE();
       io.writeConf(self.run);
     });
+  };
+
+  /** Adds a supose to demonstration */
+  this.supose = function () {
+    var
+      /** @private @type {!model.ReaderResult} */
+      result;
+
+    result = new model.PropReader(vars.conf.readerType).read(
+      dmjs.str.trim(rule.newProp().value())
+    );
+    if (result.error()) {
+      window.alert(result.error().message());
+      return;
+    }
+    window.alert("OK");
   };
 
 // End Rule editor --------------------------------------------------------

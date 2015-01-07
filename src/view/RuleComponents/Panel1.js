@@ -56,7 +56,9 @@ rule.Panel1 = function (control) {
     i18n.get().small.push(e);
   });
 
-  supBt = mkBt(i18n._("Sup."));
+  supBt = mkBt(i18n._("Sup.")).on(function (peer) {
+    peer.onclick = function () { control.supose(); };
+  });
   impBt = mkBt(i18n._("Imp."));
   ruleBt = mkBt(i18n._("Rule"));
 

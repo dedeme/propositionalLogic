@@ -35,6 +35,12 @@ goog.require("rule.Panel4");
 view.Rule = function (control) {
   "use strict";
 
+  var
+    pn1,
+    pn2,
+    pn3,
+    pn4;
+
   /**
    * Show Rule editor
    */
@@ -42,10 +48,6 @@ view.Rule = function (control) {
     var
       $,
       td,
-      pn1,
-      pn2,
-      pn3,
-      pn4,
       table;
 
     $ = dmjs.ui.$;
@@ -87,5 +89,7 @@ view.Rule = function (control) {
             .add(table))));
   };
 
+  /** @return {!dmjs.DomObject} TextArea with new proposition */
+  this.newProp = function () { return pn2.tx(); };
 
 };

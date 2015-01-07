@@ -16,7 +16,7 @@
  * along with 'propositionalLogic'.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*globals goog, dmjs, rule, i18n */
+/*globals goog, dmjs, rule, i18n, cons */
 
 goog.provide("rule.Panel4");
 
