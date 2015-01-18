@@ -1,5 +1,5 @@
 /*
- * Copyright 30-Dic-2014 ºDeme
+ * Copyright 18-Jan-2015 ºDeme
  *
  * This file is part of 'propositionalLogic'.
  *
@@ -16,33 +16,31 @@
  * along with 'propositionalLogic'.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*globals goog, dmjs, view, i18n, rule */
+/*globals goog, dmjs, i18n, view */
 
-/** Rule editor */
-goog.provide("view.Rule");
+/** Corpus editor */
+goog.provide("view.Corpus");
 
 goog.require("dmjs.ui");
 goog.require("i18n");
-goog.require("rule.Panel1");
-goog.require("rule.Panel2");
-goog.require("rule.Panel3");
-goog.require("rule.Panel4");
+goog.require("corpus.Panel1");
+goog.require("corpus.Panel2");
+goog.require("corpus.Panel3");
 
 /**
  * @constructor
  * @param {!Control} control
  */
-view.Rule = function (control) {
+view.Corpus = function (control) {
   "use strict";
 
   var
     pn1,
     pn2,
-    pn3,
-    pn4;
+    pn3;
 
   /**
-   * Show Rule editor
+   * Show Corpus editor
    */
   this.show = function () {
     var
@@ -53,25 +51,20 @@ view.Rule = function (control) {
     $ = dmjs.ui.$;
     td = "padding:0px 10px 0px 10px;";
 
-    pn1 = new rule.Panel1(control);
-    pn2 = new rule.Panel2(control);
-    pn3 = new rule.Panel3(control);
-    pn4 = new rule.Panel4(control);
+    pn1 = new corpus.Panel1(control);
+    pn2 = new corpus.Panel2(control);
+    pn3 = new corpus.Panel3(control);
 
     table = $("table").att("width", "100%")
       .add($("tr")
-        .add($("td").att("style", "width:5px;height:5px;")
-          .att("nowrap", "true").att("valign", "top")
+        .add($("td").att("style", "width:200px;")
+          .att("nowrap", "true").att("valign", "top").att("align", "center")
           .att("rowspan", "2")
           .add(pn1.panel()))
         .add($("td").att("valign", "top")
           .add(pn2.panel())))
       .add($("tr")
-        .add($("td").att("rowspan", "2").att("valign", "top")
-          .add(pn4.panel())))
-      .add($("tr")
-        .add($("td").att("style", "width:5px;height:500px;")
-          .att("align", "center").att("valign", "top").att("nowrap", "true")
+        .add($("td").att("valign", "top")
           .add(pn3.panel())));
 
 
@@ -82,29 +75,30 @@ view.Rule = function (control) {
         .att("style",
           "background-color: #f8f8f8;" +
           "border-collapse: collapse;")
-        .add(view.menu.create(control, view.menu.RULE()))
+        .add(view.menu.create(control, view.menu.CORPUS()))
         .add($("tr")
           .add($("td")
             .att("colspan", view.menu.optionNumber().toString())
             .att("style", td)
             .add(table))));
 
-    pn4.init();
+    pn1.init();
+    pn2.init();
+    pn3.init();
   };
 
-  /** @return {!dmjs.DomObject} TextArea with new proposition */
-  this.newProp = function () { return pn2.tx(); };
+  /** @return {!corpus.Panel2} */
+  this.pn2 = function () {
+    return pn2;
+  }
 
-  /** @return {!dmjs.DomObject} TextField with setep numbers */
-  this.stepsTx = function () { return pn1.stepsTx(); };
+  /** @return {!corpus.Panel3} */
+  this.pn3 = function () {
+    return pn3;
+  }
 
-  /** @return {!dmjs.DomObject} Area with demonstration */
-  this.demoTx = function () { return pn4.tx(); };
-
-  /** @return {!dmjs.DomObject} Area with demonstration */
-  this.idTx = function () { return pn4.id(); };
-
-  /** @return {!string} Selected rule */
-  this.selectedRule = function () { return pn3.selected(); };
-
+  /** @return {!view.Menu2} */
+  this.corpusTree = function () {
+    return pn1.corpusTree();
+  };
 };

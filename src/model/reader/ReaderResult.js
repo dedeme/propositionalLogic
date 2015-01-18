@@ -30,6 +30,8 @@ goog.require("model.ReaderError");
  * @param {!logic1.Prop.<!string> | null} prop
  */
 model.ReaderResult = function (position, error, prop) {
+  "use strict";
+
   /** @return {!number} */
   this.position = function () { return position; };
   /** @return {!model.ReaderError | null} */

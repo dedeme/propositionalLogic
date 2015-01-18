@@ -53,7 +53,13 @@ Conf = function () {
    * </pre>
    * @type {!string} Default "L" -> Lukasiewicz
    */
-  this.readerType = "L";
+  this.readerWriterType = "L";
+
+  /**
+   * Last group selected in corpus panel or ""
+   * @type {!string} Default ""
+   */
+  this.corpusGroup = "";
 
   /**
    * @return {!Object.<!string, ?>}
@@ -62,7 +68,8 @@ Conf = function () {
     return {
       "lang" : self.lang,
       "menuOption" : self.menuOption,
-      "readerType" : self.readerType
+      "readerWriterType" : self.readerWriterType,
+      "corpusGroup" : self.corpusGroup
     };
   };
 };
@@ -81,7 +88,8 @@ Conf.restore = function (serial) {
   r = new Conf();
   r.lang = serial["lang"];
   r.menuOption = serial["menuOption"];
-  r.readerType = serial["readerType"];
+  r.readerWriterType = serial["readerWriterType"];
+  r.corpusGroup = serial["corpusGroup"];
 
   return r;
 };

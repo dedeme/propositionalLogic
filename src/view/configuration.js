@@ -74,6 +74,21 @@ goog.require("view.menu");
               peer.onchange = function () {
                 control.changeLang(peer.value);
               };
+            }))))
+       .add($("tr")
+          .add($("td").att("style", td + "text-align:right;")
+          .html(i18n.b_("view.configuration-readerWriter")))
+        .add($("td").att("style", td)
+          .add(dmjs.ui.select("readerWriter", [
+            (conf.readerWriterType === "O" ? "+" : "") + i18n._("Ordinary"),
+            (conf.readerWriterType === "L" ? "+" : "") + "Lukasiewicz"
+          ])
+            .on(function (peer) {
+              peer.onchange = function () {
+                control.changeReaderWriterType(
+                  peer.value === "Lukasiewicz" ? "L" : "O"
+                );
+              };
             }))));
 
     control.mainDiv().removeAll()

@@ -16,7 +16,7 @@
  * along with 'propositionalLogic'.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*globals goog, dmjs, model */
+/*globals goog, dmjs, model, i18n */
 
 goog.provide("model.ReaderError");
 

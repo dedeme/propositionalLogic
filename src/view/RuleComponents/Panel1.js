@@ -1,5 +1,5 @@
 /*
- * Copyright 5-Jan-2014 ºDeme
+ * Copyright 5-Jan-2015 ºDeme
  *
  * This file is part of 'propositionalLogic'.
  *
@@ -57,10 +57,14 @@ rule.Panel1 = function (control) {
   });
 
   supBt = mkBt(i18n._("Sup.")).on(function (peer) {
-    peer.onclick = function () { control.supose(); };
+    peer.onclick = function () { control.addSupose(); };
   });
-  impBt = mkBt(i18n._("Imp."));
-  ruleBt = mkBt(i18n._("Rule"));
+  impBt = mkBt(i18n._("Imp.")).on(function (peer) {
+    peer.onclick = function () { control.addImply(); };
+  });
+  ruleBt = mkBt(i18n._("Rule")).on(function (peer) {
+    peer.onclick = function () { control.addRule(); };
+  });
 
   stepsTx = $("input").att("type", "field").att("style", "width:210px;");
 
@@ -80,4 +84,7 @@ rule.Panel1 = function (control) {
           .add($("td").att("colspan", 3).att("style", "color:#a9a9a9;")
             .html("<i>" + i18n._("e.g.: \"1,3,6,3\"") + "</i>"))));
   };
+
+  /** @return {!dmjs.DomObject} */
+  this.stepsTx = function () { return stepsTx; };
 };

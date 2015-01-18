@@ -61,7 +61,7 @@ model.PropReader = function (type) {
       return new model.ReaderResult(
         pos + 1,
         null,
-        logic1.Prop.s(new logic1.SingleProp(s[0], function (e1, e2) {
+        new logic1.S(new logic1.SingleProp(s[pos], function (e1, e2) {
           return e1 === e2;
         }))
       );
@@ -74,7 +74,7 @@ model.PropReader = function (type) {
       return new model.ReaderResult(
         r.position(),
         null,
-        logic1.Prop.n(r.prop())
+        new logic1.N(r.prop())
       );
     }
     if (s[pos] === "C") {
@@ -89,7 +89,7 @@ model.PropReader = function (type) {
       return new model.ReaderResult(
         r2.position(),
         null,
-        logic1.Prop.i(r.prop(), r2.prop())
+        new logic1.I(r.prop(), r2.prop())
       );
     }
     return new model.ReaderResult(

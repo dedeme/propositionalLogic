@@ -1,5 +1,5 @@
 /*
- * Copyright 7-Jan-2014 ºDeme
+ * Copyright 7-Jan-2015 ºDeme
  *
  * This file is part of 'propositionalLogic'.
  *
@@ -22,170 +22,210 @@ goog.provide("model.Step");
 
 goog.require("logic1.Prop");
 goog.require("model.PropWriter");
+goog.require("model.PropReader");
 
 /**
  * @constructor
  * @private
- * @param {!string} type
- * @param {!Object} object
  */
-model.Step = function (type, object) {
+model.Step = function () {
   "use strict";
-  /*jslint closure:true */
 
-  var
-    self;
-
-  self = this;
-
-  /** @return {!Object | null} */
+  /** @return {!model.Imp | null} */
   this.imp = function () {
-    if (type === "IMP") {
-      return object;
-    }
     return null;
   };
 
   /** @return {!model.Sup | null} */
   this.sup = function () {
-    if (type === "SUP") {
-      return /** @private @type {!model.Sup} */ (object);
-    }
     return null;
   };
 
   /** @return {!model.Rule | null} */
   this.rule = function () {
-    if (type === "RULE") {
-      return /** @private @type {!model.Rule} */ (object);
-    }
     return null;
+  };
+
+  /** @return {!model.Corpus} */
+  this.corpus = function () {
+    throw "Function without implementation";
   };
 
   /**
    * @return {!Object.<!string, ?>}
    */
   this.serialize = function () {
-    var
-      imp,
-      sup,
-      rule;
-
-    imp = self.imp();
-    if (imp) {
-      return {
-        "type" : type
-      };
-    }
-    sup = self.sup();
-    if (sup) {
-      return {
-        "type" : type,
-        "prop" : new model.PropWriter("L").write(sup.prop())
-      };
-    }
-    rule = self.rule();
-    if (rule) {
-      return {
-        "type" : type,
-        "prop" : new model.PropWriter("L").write(rule.prop()),
-        "rule" : rule.rule(),
-        "steps" : rule.steps()
-      };
-    }
-    throw type + ": Error in serialization";
+    throw "Function without implementation";
   };
 };
 
 /**
+ * @param {!model.Corpus} corpus
  * @param {!Object.<!string, ?>} serial
  * @return {!model.Step}
  */
-model.Step.restore = function (serial) {
+model.Step.restore = function (corpus, serial) {
   "use strict";
 
+  switch (serial["type"]) {
+    case "IMP" : return model.Imp.restore(corpus, serial);
+    case "SUP" : return model.Sup.restore(corpus, serial);
+    case "RULE" : return model.Rule.restore(corpus, serial);
+    default : throw "Unknown Step type in restoration";
+  };
+};
+
+/**
+ * @constructor
+ * @extends model.Step
+ * @param {!model.Corpus} corpus
+ */
+model.Imp = function (corpus) {
+  "use strict";
+
+  var self = dmjs.func.inherits(this, new model.Step());
+
+  /** @return {!model.Imp | null} */
+  this.imp = function () {
+    return self;
+  };
+
+  /** @return {!model.Corpus} */
+  this.corpus = function () {
+    return corpus;
+  };
+
+  /**
+   * @override @return {!Object.<!string, ?>}
+   */
+  this.serialize = function () {
+    return {
+      "type" : "IMP"
+    };
+  };
+};
+
+/**
+ * @param {!model.Corpus} corpus
+ * @param {!Object.<!string, ?>} serial
+ * @return {!model.Imp}
+ */
+model.Imp.restore = function (corpus, serial) {
+  return new model.Imp(corpus);
+};
+
+/**
+ * @constructor
+ * @extends model.Step
+ * @param {!model.Corpus} corpus
+ * @param {!logic1.Prop.<!string>} prop
+ */
+model.Sup = function (corpus, prop) {
+  "use strict";
+
+  var self = dmjs.func.inherits(this, new model.Step());
+
+  /** @return {!model.Sup | null} */
+  this.sup = function () {
+    return self;
+  };
+
+  /** @return {!logic1.Prop.<!string>} */
+  this.prop = function () {
+    return prop;
+  }
+
+  /** @return {!model.Corpus} */
+  this.corpus = function () {
+    return corpus;
+  };
+
+  /**
+   * @return {!Object.<!string, ?>}
+   */
+  this.serialize = function () {
+    return {
+      "type" : "SUP",
+      "prop" : corpus.writer().write(prop)
+    };
+  };
+};
+/**
+ * @param {!model.Corpus} corpus
+ * @param {!Object.<!string, ?>} serial
+ * @return {!model.Sup}
+ */
+model.Sup.restore = function (corpus, serial) {
   var
-    /** @private @type {!string} */
-    type,
-    /** @private @type {!logic1.Prop.<!string> | null} */
-    prop,
-    /** @private @type {!string | null} */
-    rule,
-    /** @private @type {!Array.<!number> | null} */
-    steps;
+    prop;
 
-  type = serial["type"];
-  if (type === "IMP") {
-    return model.Step.imp();
+  prop = corpus.reader().read(serial["prop"]).prop();
+  if (prop) {
+    return new model.Sup(corpus, prop);
   }
-  prop = new model.PropReader("L").read(serial["prop"]).prop();
-  if (type === "SUP" && prop) {
-    return model.Step.sup(prop);
-  }
-  rule = serial["rule"];
-  steps = serial["steps"];
-  if (type === "SUP" && prop && rule && steps) {
-    return model.Step.rule(prop, rule, steps);
-  }
-  throw type + ": Unknown Step type in restoration";
-};
-
-/** @return {!model.Step} */
-model.Step.imp = function () {
-  "use strict";
-
-  return new model.Step("IMP", {});
+  throw "Error restoring model.Sup";
 };
 
 /**
  * @constructor
- * @private
- * @param {!logic1.Prop.<!string>} prop
- */
-model.Sup = function (prop) {
-  "use strict";
-
-  /** @return {!logic1.Prop.<!string>} */
-  this.prop = function () { return prop; };
-};
-
-/**
- * @param {!logic1.Prop.<!string>} prop
- * @return {!model.Step}
- */
-model.Step.sup = function (prop) {
-  "use strict";
-
-  return new model.Step("SUP", new model.Sup(prop));
-};
-
-/**
- * @constructor
- * @private
- * @param {!logic1.Prop.<!string>} prop
- * @param {!string} rule Rule identifier in 'corpus'
+ * @extends model.Step
+ * @param {!model.Corpus} corpus
+ * @param {!string} corpusRule Rule identifier in 'corpus'
  * @param {!Array.<!number>} steps Demonstration steps
+ * @param {!logic1.Prop.<!string>} prop Rule conclusion
  */
-model.Rule = function (prop, rule, steps) {
+model.Rule = function (corpus, corpusRule, steps, prop) {
   "use strict";
 
-  /** @return {!logic1.Prop.<!string>} */
-  this.prop = function () { return prop; };
+  var self = dmjs.func.inherits(this, new model.Step());
+
+  /** @return {!model.Rule | null} */
+  this.rule = function () {
+    return self;
+  };
   /** @return {!string} */
-  this.rule = function () { return rule; };
+  this.corpusRule = function () { return corpusRule; };
   /** @return {!Array.<!number>} */
   this.steps = function () { return steps; };
+  /** @return {!logic1.Prop.<!string>} */
+  this.prop = function () { return prop; };
+
+  /** @return {!model.Corpus} */
+  this.corpus = function () {
+    return corpus;
+  };
+
+  /**
+   * @override @return {!Object.<!string, ?>}
+   */
+  this.serialize = function () {
+    return {
+      "type" : "RULE",
+      "corpusRule" : corpusRule,
+      "steps" : steps,
+      "prop" : corpus.writer().write(prop)
+    };
+  };
 };
 
 /**
- * @param {!logic1.Prop.<!string>} prop
- * @param {!string} rule Rule identifier in 'corpus'
- * @param {!Array.<!number>} steps Demonstration steps
- * @return {!model.Step}
+ * @param {!model.Corpus} corpus
+ * @param {!Object.<!string, ?>} serial
+ * @return {!model.Rule}
  */
-model.Step.rule = function (prop, rule, steps) {
-  "use strict";
+model.Rule.restore = function (corpus, serial) {
+  var
+    /** @private @type {!logic1.Prop.<!string> | null} */
+    prop;
 
-  return new model.Step("RULE", new model.Rule(prop, rule, steps));
+  prop = corpus.reader().read(serial["prop"]).prop();
+  if (prop) {
+    return new model.Rule(
+      corpus,
+      serial["corpusRule"],
+      serial["steps"],
+      prop
+    );
+  }
+  throw "Error restoring model.Rule";
 };
-

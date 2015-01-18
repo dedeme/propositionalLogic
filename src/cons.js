@@ -32,7 +32,7 @@ goog.require("dmjs.Session");
   /** return {!string} */
   ns.appName = function () { return "propositionalLogic"; };
 
-  session = new dmjs.Session(ns.appName() + "-Session", 900);
+  session = new dmjs.Session(ns.appName() + "-Session", 86400);
   /** return {!dmjs.Session} */
   ns.session = function () { return session; };
 
@@ -56,6 +56,11 @@ goog.require("dmjs.Session");
    * @const @type {!string}
    */
   ns.VL = String.fromCharCode(9474);
+  /**
+   * &#9500;
+   * @const @type {!string}
+   */
+  ns.CONCLUSION = String.fromCharCode(9500);
 
   /** @const @type {!string} Simbols Lukasiewicz notation. ("pqrst") */
   ns.singlePropLettersL = "pqrst";

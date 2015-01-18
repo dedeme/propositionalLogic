@@ -22,6 +22,8 @@
 goog.provide("func");
 
 goog.require("dmjs.cryp");
+goog.require("dmjs.It");
+goog.require("cons");
 
 (function (ns) {
   'use strict';
@@ -51,6 +53,53 @@ goog.require("dmjs.cryp");
    */
   ns.demePass = function () {
     return demePass;
+  };
+
+  /**
+   * @param {!number} indent
+   * @param {!string} p
+   */
+  ns.writeSupose = function (indent, p) {
+    return dmjs.It.range(indent).reduce("", function (seed, e) {
+      return seed + cons.VL;
+    }) + cons.SA + cons.HL + " " + p;
+  };
+
+  /**
+   * @param {!number} indent
+   * @param {!string} p
+   */
+  ns.writeAssertion = function (indent, p) {
+    return dmjs.It.range(indent).reduce("", function (seed, e) {
+      return seed + cons.VL;
+    }) + "  " + p;
+  };
+
+  /**
+   * @param {!number} indent
+   * @param {!string} p
+   */
+  ns.writeConclusion = function (indent, p) {
+    return dmjs.It.range(indent).reduce("", function (seed, e) {
+      return seed + cons.VL;
+    }) + cons.IA + cons.HL + " " + p;
+  };
+
+  /**
+   * @param {!model.PropWriter} writer
+   * @param {!logic1.Rule.<!string>} rule
+   */
+  ns.writeRule = function (writer, rule) {
+    var
+      r;
+
+    r = "";
+
+    dmjs.It.from(rule.premises()).each(function (p) {
+      r += cons.HL + cons.HL + " " + writer.write(p) + "\n"
+    });
+    r += cons.CONCLUSION + cons.HL  + " " + writer.write(rule.conclusion());
+    return r;
   };
 
 }(func));

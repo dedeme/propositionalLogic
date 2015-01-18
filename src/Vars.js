@@ -21,6 +21,9 @@
 /** */
 goog.provide("Vars");
 
+goog.require("model.Demo");
+goog.require("model.Corpus");
+
 /**
  * @constructor
  */
@@ -43,5 +46,14 @@ Vars = function () {
    * @type {!Conf | null} Default 'null'
    */
   this.conf = null;
+
+  /** @type {!model.Corpus} */
+  this.corpus = model.Corpus.make();
+
+  /**
+   * Current domonstration
+   * @type {!model.Demo}
+   */
+  this.demo = model.Demo.make(this.corpus);
 
 };

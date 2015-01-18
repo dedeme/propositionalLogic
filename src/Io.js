@@ -25,6 +25,8 @@ goog.require("dmjs.server.Connection");
 goog.require("dmjs.server.file");
 goog.require("cons");
 goog.require("Conf");
+goog.require("model.Demo");
+goog.require("model.Corpus");
 
 /**
  * @constructor
@@ -72,6 +74,55 @@ Io = function (control) {
   this.writeConf = function (action) {
     control.controlSession(function () {
       con.write("conf", control.vars().conf.serialize(), action);
+    });
+  };
+
+  /**
+   * @param {!model.Corpus} corpus
+   * @param {!function(!model.Demo)} action
+   */
+  this.readDemo = function (corpus, action) {
+    con.find("", "demo", function (f) {
+      if (f) {
+        con.read("demo", function (d) {
+          action(model.Demo.restore(corpus, d));
+        });
+      } else {
+        action(model.Demo.make(corpus));
+      }
+    });
+  };
+
+  /**
+   * @param {!function()} action
+   */
+  this.writeDemo = function (action) {
+    control.controlSession(function () {
+      con.write("demo", control.vars().demo.serialize(), action);
+    });
+  };
+
+  /**
+   * @param {!function(!model.Corpus)} action
+   */
+  this.readCorpus = function (action) {
+    con.find("", "corpus", function (f) {
+      if (f) {
+        con.read("corpus", function (d) {
+          action(model.Corpus.restore(d));
+        });
+      } else {
+        action(model.Corpus.make());
+      }
+    });
+  };
+
+  /**
+   * @param {!function()} action
+   */
+  this.writeCorpus = function (action) {
+    control.controlSession(function () {
+      con.write("corpus", control.vars().corpus.serialize(), action);
     });
   };
 

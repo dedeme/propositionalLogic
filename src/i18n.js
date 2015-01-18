@@ -37,12 +37,18 @@ goog.require("dmjs.I18n");
     ["No", "No"],
     ["Accept", "Aceptar"],
     ["Cancel", "Cancelar"],
+// Control
+    ["Indices must be numbers", "Los índices han de ser números"],
+    ["Rule name is missing", "No se ha indicado el nombre de la regla"],
 // view.menu
     ["Rule", "Regla"],
+    ["Rules", "Reglas"],
+    ["Corpus", "Corpus"],
     ["Configuration", "Configuración"],
     ["Log out", "Cerrar sesión"],
 // view.configuration
     ["Change", "Cambiar"],
+    ["Ordinary", "Ordinaria"],
 // view.passIn
     ["Login", "Identificación"],
     ["Password", "Contraseña"],
@@ -74,6 +80,9 @@ goog.require("dmjs.I18n");
     ["view.configuration-lang",
       "Language",
       "Idioma"],
+    ["view.configuration-readerWriter",
+      "Proposition representation",
+      "Representación de las proposiciones"],
 // auth.passIn
     ["auth.passIn-pass is deme",
       "Your current password is 'deme'.\n" +

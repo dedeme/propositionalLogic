@@ -17,7 +17,7 @@
  */
 
 /*globals goog, dmjs, Control:true, cons, func, Vars, auth, view, Io, Conf,
-  i18n */
+  i18n, model */
 
 /** Main controler */
 goog.provide("Control");
@@ -26,6 +26,7 @@ goog.require("dmjs.server");
 goog.require("dmjs.server.pass");
 goog.require("dmjs.store");
 goog.require("dmjs.str");
+goog.require("dmjs.It");
 goog.require("cons");
 goog.require("func");
 goog.require("Vars");
@@ -35,10 +36,13 @@ goog.require("auth.Log");
 goog.require("auth.passIn");
 goog.require("auth.passChange");
 goog.require("view.Rule");
+goog.require("view.Corpus");
 goog.require("view.logout");
 goog.require("view.configuration");
 goog.require("model.PropReader");
 goog.require("model.Step");
+goog.require("model.Corpus");
+goog.require("model.CorpusEntry");
 
 /**
  * @constructor
@@ -55,16 +59,18 @@ Control = function (mainDiv) {
     /** @private @type {!Control} */
     self,
     /** @private @type {!view.Rule} */
-    rule;
+    rule,
+    /** @private @type {!view.Corpus} */
+    wcorpus;
 
   self = this;
 
   /** Executes controler when new page is loaded */
   this.run = function () {
-
     vars = new Vars();
     vars.log = new auth.Log(self);
     rule = new view.Rule(self);
+    wcorpus = new view.Corpus(self);
     dmjs.server.pass.auth(
       cons.appName(),
       "admin",
@@ -95,16 +101,25 @@ Control = function (mainDiv) {
               io.readConf(function (conf) {
                 vars.conf = conf;
                 i18n.get().selected = conf.lang;
-                switch (conf.menuOption) {
-                case view.menu.RULE():
-                  rule.show();
-                  break;
-                case view.menu.CONFIGURATION():
-                  view.configuration.show(self);
-                  break;
-                default:
-                  rule.show();
-                }
+                io.readCorpus(function (corpus) {
+                  vars.corpus = corpus;
+                  switch (conf.menuOption) {
+                  case view.menu.RULE():
+                    io.readDemo(corpus, function (demo) {
+                      vars.demo = demo;
+                      rule.show();
+                    });
+                    break;
+                  case view.menu.CORPUS():
+                    wcorpus.show();
+                    break;
+                  case view.menu.CONFIGURATION():
+                    view.configuration.show(self);
+                    break;
+                  default:
+                    rule.show();
+                  }
+                });
               });
             });
           } else {
@@ -128,6 +143,9 @@ Control = function (mainDiv) {
   /** @return {!Io} */
   this.io = function () { return io; };
 
+  /** @return {!view.Rule} */
+  this.rule = function () { return rule; };
+
 // Rule editor ------------------------------------------------------------
   /** Shows rule editor */
   this.goRule = function () {
@@ -138,23 +156,206 @@ Control = function (mainDiv) {
   };
 
   /** Adds a supose to demonstration */
-  this.supose = function () {
-    var
-      /** @private @type {!model.ReaderResult} */
-      result;
+  this.addSupose = function () {
+    try {
+      var
+        corpus,
+        rr,
+        error,
+        prop;
 
-    result = new model.PropReader(vars.conf.readerType).read(
-      dmjs.str.trim(rule.newProp().value())
-    );
-    if (result.error()) {
-      window.alert(result.error().message());
-      return;
+      corpus = vars.corpus;
+
+      rr = corpus.reader().read(
+        dmjs.str.trim(rule.newProp().value())
+      );
+      error = rr.error();
+      prop = rr.prop();
+      if (error) {
+        throw new model.Excep(error);
+      }
+      if (prop) {
+        vars.demo.add(new model.Sup(corpus, prop));
+        io.writeDemo(function () {
+          rule.show();
+        });
+      } else {
+        throw "Error in ReadResult";
+      }
+    } catch (ex) {
+      if (typeof (ex.message) === "function") {
+        window.alert(ex.message());
+      } else if (typeof (ex.noRule) === "function") {
+        window.alert(new model.Excep(ex).message());
+      } else {
+        throw ex;
+      }
     }
-    window.alert("OK");
+  };
+
+  /** Adds an implication to demonstration */
+  this.addImply = function () {
+    try {
+      var
+        corpus;
+
+      corpus = vars.corpus;
+
+      vars.demo.add(new model.Imp(corpus));
+      io.writeDemo(function () {
+        rule.show();
+      });
+    } catch (ex) {
+      if (typeof (ex.message) === "function") {
+        window.alert(ex.message());
+      } else if (typeof (ex.noRule) === "function") {
+        window.alert(new model.Excep(ex).message());
+      } else {
+        throw ex;
+      }
+    }
+  };
+
+  /** Adds a rule to demonstration */
+  this.addRule = function () {
+    var
+      corpus,
+      rr,
+      error,
+      prop,
+      ruleApp,
+      stepsTx,
+      steps;
+
+    try {
+      corpus = vars.corpus;
+
+      rr = corpus.reader().read(
+        dmjs.str.trim(rule.newProp().value())
+      );
+      error = rr.error();
+      prop = rr.prop();
+      if (error) {
+        throw new model.Excep(error);
+      }
+      if (prop) {
+        ruleApp = rule.selectedRule();
+        stepsTx = dmjs.str.trim(rule.stepsTx().value());
+        if (stepsTx !== "") {
+          steps = dmjs.It.from(rule.stepsTx().value().split(","))
+            .map(function (e) {
+              e = dmjs.str.trim(e);
+              if (isNaN(e)) {
+                throw new model.Excep(i18n._("Indices must be numbers"));
+              }
+              return e - 1;
+            }).toArray();
+        } else {
+          steps = [];
+        }
+        vars.demo.add(new model.Rule(corpus, ruleApp, steps, prop));
+        io.writeDemo(function () {
+          rule.show();
+        });
+      } else {
+        throw "Error in ReadResult";
+      }
+    } catch (ex) {
+      if (typeof (ex.message) === "function") {
+        window.alert(ex.message());
+      } else if (typeof (ex.noRule) === "function") {
+        window.alert(new model.Excep(ex).message());
+      } else {
+        throw ex;
+      }
+    }
+  };
+
+  /** Clears demonstration data */
+  this.del = function () {
+    vars.demo = model.Demo.make(vars.corpus);
+    io.writeDemo(function () {
+      self.run();
+    });
+  };
+
+  /** Undoes demonstration */
+  this.undo = function () {
+    vars.demo.undo();
+    io.writeDemo(function () {
+      self.run();
+    });
+  };
+
+  /** Redoes demonstration */
+  this.redo = function () {
+    vars.demo.redo();
+    io.writeDemo(function () {
+      self.run();
+    });
+  };
+
+  /** Adds a new rule to corpus */
+  this.addCorpus = function () {
+    var
+      id;
+
+    try {
+      id = dmjs.str.trim(rule.idTx().value());
+      if (id === "") {
+        throw new model.Excep(i18n._("Rule name is missing"));
+      }
+      vars.corpus.add(new model.CorpusEntry(id, vars.demo));
+      io.writeCorpus(self.del);
+    } catch (ex) {
+      if (typeof (ex.message) === "function") {
+        window.alert(ex.message());
+      } else if (typeof (ex.noRule) === "function") {
+        window.alert(new model.Excep(ex).message());
+      } else {
+        throw ex;
+      }
+    }
+  };
+
+  /** Show demonstration lines */
+  this.viewDemo = function () {
+    rule.demoTx().value(
+      vars.demo.show(new model.PropWriter(vars.conf.readerWriterType))
+    );
+  };
+
+  /** Show demonstration rule */
+  this.viewRule = function () {
+    rule.demoTx().value(
+      vars.demo.showRule(new model.PropWriter(vars.conf.readerWriterType))
+    );
   };
 
 // End Rule editor --------------------------------------------------------
+// Corpus editor ----------------------------------------------------------
+  /** Shows corpus editor */
+  this.goCorpus = function () {
+    self.controlSession(function () {
+      vars.conf.menuOption = view.menu.CORPUS();
+      io.writeConf(self.run);
+    });
+  };
 
+  /**  */
+  this.clickGroup = function () {
+    vars.conf.corpusGroup = wcorpus.corpusTree().selectedGroup();
+    io.writeConf(function () { return undefined; });
+    wcorpus.pn2().init();
+  };
+
+  /** @param {!string} id */
+  this.clickRule = function (id) {
+    wcorpus.pn2().initRule(id);
+    wcorpus.pn3().initRule(id);
+  };
+
+// End Corpus editor ------------------------------------------------------
   /** Shows configuration page */
   this.goConfiguration = function () {
     self.controlSession(function () {
@@ -194,6 +395,15 @@ Control = function (mainDiv) {
    */
   this.changeLang = function (lang) {
     vars.conf.lang = lang;
+    io.writeConf(self.run);
+  };
+
+  /**
+   * Action for changing type of Reader-Writer
+   * @param {!string} type
+   */
+  this.changeReaderWriterType = function (type) {
+    vars.conf.readerWriterType = type;
     io.writeConf(self.run);
   };
 
