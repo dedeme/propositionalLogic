@@ -16,7 +16,7 @@
  * along with 'propositionalLogic'.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*globals goog, dmjs, Io:true, cons, Conf */
+/*globals goog, dmjs, Io:true, cons, Conf, model */
 
 /** Server communications */
 goog.provide("Io");

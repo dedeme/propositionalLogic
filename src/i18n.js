@@ -40,6 +40,11 @@ goog.require("dmjs.I18n");
 // Control
     ["Indices must be numbers", "Los índices han de ser números"],
     ["Rule name is missing", "No se ha indicado el nombre de la regla"],
+// Demo
+    ["Axiom - Definition", "Axioma - Definición"],
+    ["Supposition", "Supuesto"],
+    ["Implication", "Implicación"],
+    ["Rule %0 at [%1]", "Regla %0 en [%1]"],
 // view.menu
     ["Rule", "Regla"],
     ["Rules", "Reglas"],
@@ -67,6 +72,10 @@ goog.require("dmjs.I18n");
   ];
 
   i18.big = [
+// Control
+    ["delete rule",
+      "'%0' with %1 derivations will be deleted.\nConfirm?",
+      "Se borrará '%0' y %1 derivaciones.\n¿Confirmar?"],
 // view.logout
     ["view.logout-message",
       "<p>Session correctly closed.<br><b>Good bye!</b></p>",

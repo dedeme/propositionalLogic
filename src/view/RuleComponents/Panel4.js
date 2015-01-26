@@ -16,7 +16,7 @@
  * along with 'propositionalLogic'.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*globals goog, dmjs, rule, i18n, cons */
+/*globals goog, dmjs, rule, i18n, cons, model */
 
 goog.provide("rule.Panel4");
 
@@ -32,7 +32,6 @@ rule.Panel4 = function (control) {
   "use strict";
 
   var
-    setValues,
     nameTx,
     viewDemo,
     viewRule,
@@ -123,7 +122,6 @@ rule.Panel4 = function (control) {
       demo,
       /** @private @type {!model.PropWriter} */
       writer;
-      ;
 
     demo = control.vars().demo;
     writer = new model.PropWriter(control.vars().conf.readerWriterType);

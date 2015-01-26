@@ -16,7 +16,7 @@
  * along with 'propositionalLogic'.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*globals goog, dmjs, func:true */
+/*globals goog, dmjs, func:true, cons */
 
 /** Global functions */
 goog.provide("func");
@@ -61,6 +61,7 @@ goog.require("cons");
    */
   ns.writeSupose = function (indent, p) {
     return dmjs.It.range(indent).reduce("", function (seed, e) {
+      /*jslint unparam:true */
       return seed + cons.VL;
     }) + cons.SA + cons.HL + " " + p;
   };
@@ -71,6 +72,7 @@ goog.require("cons");
    */
   ns.writeAssertion = function (indent, p) {
     return dmjs.It.range(indent).reduce("", function (seed, e) {
+      /*jslint unparam:true */
       return seed + cons.VL;
     }) + "  " + p;
   };
@@ -81,6 +83,7 @@ goog.require("cons");
    */
   ns.writeConclusion = function (indent, p) {
     return dmjs.It.range(indent).reduce("", function (seed, e) {
+      /*jslint unparam:true */
       return seed + cons.VL;
     }) + cons.IA + cons.HL + " " + p;
   };
@@ -96,7 +99,7 @@ goog.require("cons");
     r = "";
 
     dmjs.It.from(rule.premises()).each(function (p) {
-      r += cons.HL + cons.HL + " " + writer.write(p) + "\n"
+      r += cons.HL + cons.HL + " " + writer.write(p) + "\n";
     });
     r += cons.CONCLUSION + cons.HL  + " " + writer.write(rule.conclusion());
     return r;

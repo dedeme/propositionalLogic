@@ -68,11 +68,15 @@ model.Step.restore = function (corpus, serial) {
   "use strict";
 
   switch (serial["type"]) {
-    case "IMP" : return model.Imp.restore(corpus, serial);
-    case "SUP" : return model.Sup.restore(corpus, serial);
-    case "RULE" : return model.Rule.restore(corpus, serial);
-    default : throw "Unknown Step type in restoration";
-  };
+  case "IMP":
+    return model.Imp.restore(corpus, serial);
+  case "SUP":
+    return model.Sup.restore(corpus, serial);
+  case "RULE":
+    return model.Rule.restore(corpus, serial);
+  default:
+    throw "Unknown Step type in restoration";
+  }
 };
 
 /**
@@ -111,6 +115,9 @@ model.Imp = function (corpus) {
  * @return {!model.Imp}
  */
 model.Imp.restore = function (corpus, serial) {
+  "use strict";
+  /*jslint unparam:true */
+
   return new model.Imp(corpus);
 };
 
@@ -133,7 +140,7 @@ model.Sup = function (corpus, prop) {
   /** @return {!logic1.Prop.<!string>} */
   this.prop = function () {
     return prop;
-  }
+  };
 
   /** @return {!model.Corpus} */
   this.corpus = function () {
@@ -156,6 +163,7 @@ model.Sup = function (corpus, prop) {
  * @return {!model.Sup}
  */
 model.Sup.restore = function (corpus, serial) {
+  "use strict";
   var
     prop;
 
@@ -214,6 +222,7 @@ model.Rule = function (corpus, corpusRule, steps, prop) {
  * @return {!model.Rule}
  */
 model.Rule.restore = function (corpus, serial) {
+  "use strict";
   var
     /** @private @type {!logic1.Prop.<!string> | null} */
     prop;

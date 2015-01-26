@@ -61,6 +61,37 @@ goog.require("dmjs.Session");
    * @const @type {!string}
    */
   ns.CONCLUSION = String.fromCharCode(9500);
+  /**
+   * &#9472;&#9654;
+   * @const @type {!string}
+   */
+  ns.IMP = String.fromCharCode(9472) + String.fromCharCode(9654);
+  /**
+   * &#9664;&#9472;&#9654;
+   * @const @type {!string}
+   */
+  ns.DIMP = String.fromCharCode(9664) +
+    String.fromCharCode(9472) + String.fromCharCode(9654);
+  /**
+   * &#8743;
+   * @const @type {!string}
+   */
+  ns.AND = String.fromCharCode(8743);
+  /**
+   * &#8744;
+   * @const @type {!string}
+   */
+  ns.OR = String.fromCharCode(8744);
+  /**
+   * &#8802;
+   * @const @type {!string}
+   */
+  ns.XOR = String.fromCharCode(8802);
+  /**
+   * &#172;
+   * @const @type {!string}
+   */
+  ns.NOT = String.fromCharCode(172);
 
   /** @const @type {!string} Simbols Lukasiewicz notation. ("pqrst") */
   ns.singlePropLettersL = "pqrst";

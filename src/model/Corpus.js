@@ -16,7 +16,7 @@
  * along with 'propositionalLogic'.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*globals goog, dmjs, model, logic1 */
+/*globals goog, dmjs, model, logic1, i18n */
 
 /** Set of rules with their demonstations */
 goog.provide("model.Corpus");
@@ -75,6 +75,41 @@ model.Corpus = function () {
         i18n.__("Theorem name '%0' already exists", entry.id())
       );
     }
+  };
+
+  /**
+   * @param {Array.<!string>} ids Rule ids which will be removed.
+   */
+  this.remove = function (ids) {
+    entries = dmjs.It.from(entries).filter(function (e) {
+      return !dmjs.It.from(ids).any(function (id) {
+        return e.id() === id;
+      });
+    }).toArray();
+  };
+
+  /**
+   * Modifies 'previous' name of rule, setting it to 'next'.
+   * @param {!string} previous Previous name
+   * @param {!string} next New name
+   */
+  this.modify = function (previous, next) {
+    if (previous === next) {
+      return;
+    }
+    if (dmjs.It.from(entries).any(function (e) {
+        return e.id() === next;
+      })) {
+      throw new model.Excep(
+        i18n.__("Theorem name '%0' already exists", next)
+      );
+    }
+    entries = dmjs.It.from(entries).map(function (e) {
+      if (e.id() === previous) {
+        return new model.CorpusEntry(next, e.demo());
+      }
+      return e;
+    }).toArray();
   };
 
   /** @return {!Array.<model.CorpusEntry>} */
@@ -174,8 +209,8 @@ model.Corpus = function () {
       dmjs.It.from(entry.demo().allBases(self)).each(function (id2) {
         if (id === id2) {
           if (!dmjs.It.from(seed).any(function (seedId) {
-            return seedId === entryId;
-          })) {
+              return seedId === entryId;
+            })) {
             seed.push(entryId);
           }
         }

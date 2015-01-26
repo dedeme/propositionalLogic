@@ -147,11 +147,11 @@ model.Excep = function (ex) {
       throw "Exception not cached";
     } else if (typeof (ex.message) === "function") {
       return ex.message();
-    } else if (typeof(ex) === "string") {
-      return ex;
-    } else {
-      throw "Unknow exception";
     }
+    if (typeof ex === "string") {
+      return ex;
+    }
+    throw "Unknow exception";
   };
 
   /** @override */

@@ -16,7 +16,7 @@
  * along with 'propositionalLogic'.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*globals goog, dmjs, i18n, view */
+/*globals goog, dmjs, i18n, view , corpus*/
 
 /** Corpus editor */
 goog.provide("view.Corpus");
@@ -90,15 +90,26 @@ view.Corpus = function (control) {
   /** @return {!corpus.Panel2} */
   this.pn2 = function () {
     return pn2;
-  }
+  };
 
   /** @return {!corpus.Panel3} */
   this.pn3 = function () {
     return pn3;
-  }
+  };
 
   /** @return {!view.Menu2} */
   this.corpusTree = function () {
     return pn1.corpusTree();
   };
+
+  /** @return {!string} */
+  this.selectedRule = function () {
+    return pn2.selectedRule();
+  };
+
+  /** @return {!string} */
+  this.derivationNumber = function () {
+    return pn3.derivationNumber();
+  };
+
 };

@@ -90,6 +90,7 @@ view.Rule = function (control) {
             .add(table))));
 
     pn4.init();
+    pn2.tx().peer.focus();
   };
 
   /** @return {!dmjs.DomObject} TextArea with new proposition */

@@ -75,7 +75,6 @@ goog.require("i18n");
       th,
       tdRule,
       tdCorpus,
-      td,
       tdConfiguration,
       tdLogout;
 

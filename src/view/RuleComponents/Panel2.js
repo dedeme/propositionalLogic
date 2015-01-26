@@ -29,6 +29,7 @@ goog.require("i18n");
  */
 rule.Panel2 = function (control) {
   "use strict";
+  /*jslint unparam:true */
 
   var
     tx,

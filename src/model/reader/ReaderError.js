@@ -40,7 +40,8 @@ model.ReaderError = function (type, s, position) {
     ["Unknown error", "Error desconocido"],
     ["Unexpected end of proposition", "Inesperado fin de la proposición"],
     ["Extra characters", "Carácteres extra"],
-    ["Unexpected symbol", "Símbolo inesperado"]
+    ["Unexpected symbol", "Símbolo inesperado"],
+    ["Parenthesis without closing", "Paréntesis sin cerrar"]
   ];
 
   dmjs.It.from(i18).each(function (e) {
@@ -50,6 +51,7 @@ model.ReaderError = function (type, s, position) {
   /** @return {!number} */
   this.position = function () { return position; };
 
+  /** */
   this.message = function () {
     var
       err;
@@ -61,6 +63,8 @@ model.ReaderError = function (type, s, position) {
       err = i18n._("Extra characters");
     } else if (type === "UNEXPECTED") {
       err = i18n._("Unexpected symbol");
+    } else if (type === "PARENT") {
+      err = i18n._("Parenthesis without closing");
     } else {
       err = i18n._("Unknown error");
     }

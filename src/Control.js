@@ -160,13 +160,15 @@ Control = function (mainDiv) {
     try {
       var
         corpus,
+        reader,
         rr,
         error,
         prop;
 
       corpus = vars.corpus;
 
-      rr = corpus.reader().read(
+      reader = new model.PropReader(vars.conf.readerWriterType);
+      rr = reader.read(
         dmjs.str.trim(rule.newProp().value())
       );
       error = rr.error();
@@ -220,6 +222,7 @@ Control = function (mainDiv) {
   this.addRule = function () {
     var
       corpus,
+      reader,
       rr,
       error,
       prop,
@@ -230,7 +233,8 @@ Control = function (mainDiv) {
     try {
       corpus = vars.corpus;
 
-      rr = corpus.reader().read(
+      reader = new model.PropReader(vars.conf.readerWriterType);
+      rr = reader.read(
         dmjs.str.trim(rule.newProp().value())
       );
       error = rr.error();
@@ -273,26 +277,24 @@ Control = function (mainDiv) {
 
   /** Clears demonstration data */
   this.del = function () {
-    vars.demo = model.Demo.make(vars.corpus);
-    io.writeDemo(function () {
-      self.run();
-    });
+    if (window.confirm("Delete current demonstration?")) {
+      vars.demo = model.Demo.make(vars.corpus);
+      io.writeDemo(self.run);
+    } else {
+      rule.newProp().peer.focus();
+    }
   };
 
   /** Undoes demonstration */
   this.undo = function () {
     vars.demo.undo();
-    io.writeDemo(function () {
-      self.run();
-    });
+    io.writeDemo(self.run);
   };
 
   /** Redoes demonstration */
   this.redo = function () {
     vars.demo.redo();
-    io.writeDemo(function () {
-      self.run();
-    });
+    io.writeDemo(self.run);
   };
 
   /** Adds a new rule to corpus */
@@ -306,7 +308,10 @@ Control = function (mainDiv) {
         throw new model.Excep(i18n._("Rule name is missing"));
       }
       vars.corpus.add(new model.CorpusEntry(id, vars.demo));
-      io.writeCorpus(self.del);
+      io.writeCorpus(function () {
+        vars.demo = model.Demo.make(vars.corpus);
+        self.run();
+      });
     } catch (ex) {
       if (typeof (ex.message) === "function") {
         window.alert(ex.message());
@@ -347,12 +352,65 @@ Control = function (mainDiv) {
     vars.conf.corpusGroup = wcorpus.corpusTree().selectedGroup();
     io.writeConf(function () { return undefined; });
     wcorpus.pn2().init();
+    wcorpus.pn3().init();
   };
 
   /** @param {!string} id */
   this.clickRule = function (id) {
     wcorpus.pn2().initRule(id);
     wcorpus.pn3().initRule(id);
+  };
+
+  /** Deletes a rule of 'Corpus' */
+  this.delRule = function () {
+    var
+      selectedRule,
+      derivations;
+
+    selectedRule = wcorpus.pn2().selectedRule();
+
+    if (window.confirm(i18n.b__(
+        "delete rule",
+        selectedRule,
+        wcorpus.pn3().derivationNumber()
+      ))) {
+      derivations = vars.corpus.derivations(selectedRule);
+      derivations.push(selectedRule);
+      vars.corpus.remove(derivations);
+      io.writeCorpus(self.run);
+    }
+  };
+
+  /** Activate modify entry */
+  this.modifyBegin = function () {
+    wcorpus.pn2().initModify();
+  };
+
+  /** Cancels modification */
+  this.modifyCancel = function () {
+    self.run();
+  };
+
+  this.modifyAccept = function () {
+    var
+      newId;
+
+    try {
+      newId = dmjs.str.trim(wcorpus.pn2().nextRuleName());
+      if (newId === "") {
+        throw new model.Excep(i18n._("Rule name is missing"));
+      }
+      vars.corpus.modify(wcorpus.pn2().previousRuleName(), newId);
+      io.writeCorpus(self.del);
+    } catch (ex) {
+      if (typeof (ex.message) === "function") {
+        window.alert(ex.message());
+      } else if (typeof (ex.noRule) === "function") {
+        window.alert(new model.Excep(ex).message());
+      } else {
+        throw ex;
+      }
+    }
   };
 
 // End Corpus editor ------------------------------------------------------

@@ -16,7 +16,7 @@
  * along with 'propositionalLogic'.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*globals goog, dmjs, Vars:true */
+/*globals goog, dmjs, Vars:true, model */
 
 /** */
 goog.provide("Vars");

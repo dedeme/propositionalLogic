@@ -45,7 +45,7 @@ corpus.Panel2 = function (control) {
 
   mkBt = function (tx, action) {
     return $("button").text(tx).att("style", "width:100px;")
-      .on(function (peer){ peer.onclick = action; });
+      .on(function (peer) { peer.onclick = action; });
   };
 
   $ = dmjs.ui.$;
@@ -59,19 +59,19 @@ corpus.Panel2 = function (control) {
   });
 
   modifyBt = mkBt(i18n._("Modify"), function () {
-    alert("Modify");
+    control.modifyBegin();
   });
   deleteBt = mkBt(i18n._("Delete"), function () {
-    alert("Delete");
+    control.delRule();
   });
   acceptBt = mkBt(i18n._("Accept"), function () {
-    alert("Accept");
+    control.modifyAccept();
   });
   cancelBt = mkBt(i18n._("Cancel"), function () {
-    alert("Cancel");
+    control.modifyCancel();
   });
   editDiv = $("div");
-  editTx = $("imput").att("type", "text").att("style", "width:220px;");
+  editTx = $("input").att("type", "text").att("style", "width:220px;");
   editLb = $("div").att("class", "frame2")
     .att("style", "text-align:center;width:220px;");
 
@@ -89,8 +89,10 @@ corpus.Panel2 = function (control) {
               .add($("tr").add($("td").att("colspan", "2")
                 .add(editDiv.add(editLb))))
               .add($("tr")
-                .add($("td").add(acceptBt))
-                .add($("td").add(cancelBt)))))));
+                .add($("td").att("style", "width:50%;text-align:center;")
+                  .add(acceptBt))
+                .add($("td").att("style", "width:50%;text-align:center;")
+                  .add(cancelBt)))))));
   };
 
   /** */
@@ -100,16 +102,52 @@ corpus.Panel2 = function (control) {
     acceptBt.disabled(true);
     cancelBt.disabled(true);
     editLb.text("---");
-  }
+  };
 
   /**
    * Sets widgets when a rule is selected
    * @param {!string} id Rule name.
    */
   this.initRule = function (id) {
+    var
+      corpus;
+
+    corpus = control.vars().corpus;
     modifyBt.disabled(false);
-    deleteBt.disabled(false);
+    if (corpus.entry(id).demo().allBases(corpus).length > 0) {
+      deleteBt.disabled(false);
+    } else {
+      deleteBt.disabled(true);
+    }
+    acceptBt.disabled(true);
+    cancelBt.disabled(true);
     editLb.text(id);
+  };
+
+  /** */
+  this.initModify = function () {
+    modifyBt.disabled(true);
+    deleteBt.disabled(true);
+    acceptBt.disabled(false);
+    cancelBt.disabled(false);
+    editTx.value(editLb.text());
+    editDiv.removeAll().add(editTx);
+    editTx.peer.focus();
+  };
+
+  /** @return {!string} */
+  this.selectedRule = function () {
+    return editLb.text();
+  };
+
+  /** @return {!string} Rule name in label */
+  this.previousRuleName = function () {
+    return editLb.text();
+  };
+
+  /** @return {!string} Raw rule name in textField */
+  this.nextRuleName = function () {
+    return editTx.value();
   };
 
 };

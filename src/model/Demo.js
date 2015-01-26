@@ -16,7 +16,7 @@
  * along with 'propositionalLogic'.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*globals goog, dmjs, model, cons, logic1, func */
+/*globals goog, dmjs, model, cons, logic1, func, i18n */
 
 /** Current demonstration */
 goog.provide("model.Demo");
@@ -32,6 +32,7 @@ goog.require("model.PropWriter");
 goog.require("model.PropReader");
 goog.require("model.Excep");
 goog.require("func");
+goog.require("i18n");
 
 /**
  * @constructor
@@ -209,6 +210,41 @@ model.Demo = function (corpus, steps, redo) {
   };
 
   /**
+   * @param {!model.PropWriter} writer
+   * @return {!dmjs.It.<!Array.<!string>>} An It over arrays of two elements
+   *  (0 -> step, 1 -> fundamentation)
+   */
+  this.showDemonstration = function (writer) {
+    return dmjs.It.zip(
+      dmjs.It.from(self.show(writer).split("\n")),
+      dmjs.It.from(steps)
+    ).map(function (e) {
+      var
+        sup,
+        rule;
+
+      sup = e[1].sup();
+      rule = e[1].rule();
+      return [
+        e[0],
+        (sup ?
+            i18n._("Supposition")
+          : rule ?
+              i18n.__(
+                "Rule %0 at [%1]",
+                rule.corpusRule(),
+                dmjs.str.trim(
+                  (dmjs.It.from(rule.steps()).reduce("", function (seed, n) {
+                    return seed + ", " + (n + 1).toString();
+                  }) + "  ").substring(2)
+                )
+              )
+            : i18n._("Implication"))
+      ];
+    });
+  };
+
+  /**
    * @return {!Array.<!string>} Disordered list of rules names used by
    *  this demonstration.
    */
@@ -316,6 +352,11 @@ model.Demo.make = function (corpus) {
 model.AxiomDemo = function (corpus, ix) {
   "use strict";
 
+  var
+    self;
+
+  self = this;
+
   /** @return {!Array.<!model.Step>} */
   this.steps = function () {
     return [];
@@ -361,8 +402,8 @@ model.AxiomDemo = function (corpus, ix) {
   };
 
   /** @return {!string} */
-  this.showRule = function () {
-    return "rule";
+  this.showRule = function (writer) {
+    return func.writeRule(writer, self.rule());
   };
 
   /**
@@ -381,6 +422,16 @@ model.AxiomDemo = function (corpus, ix) {
   this.allBases = function (corpus) {
     /*jslint unparam:true */
     return [];
+  };
+
+  /**
+   * @param {!model.PropWriter} writer
+   * @return {!dmjs.It.<!Array.<!string>>} An It over arrays of two elements
+   *  (0 -> step, 1 -> fundamentation)
+   */
+  this.showDemonstration = function (writer) {
+    /*jslint unparam:true */
+    return dmjs.It.from([[i18n._("Axiom - Definition"), ""]]);
   };
 
   /** Disabled */

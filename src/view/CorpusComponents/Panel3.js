@@ -16,14 +16,13 @@
  * along with 'propositionalLogic'.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*globals goog, dmjs, corpus, i18n */
+/*globals goog, dmjs, corpus, i18n, model */
 
 goog.provide("corpus.Panel3");
 
 goog.require("dmjs.ui");
 goog.require("dmjs.It");
 goog.require("i18n");
-goog.require("func");
 goog.require("model.PropWriter");
 
 /**
@@ -36,12 +35,14 @@ corpus.Panel3 = function (control) {
   var
     $,
     i18,
+    tdDemo1,
+    tdDemo2,
     ruleArea,
     basesNumber,
     basesArea,
     derivationNumber,
     derivationArea,
-    demonstrationArea;
+    demonstrationTb;
 
 
   $ = dmjs.ui.$;
@@ -50,6 +51,22 @@ corpus.Panel3 = function (control) {
     ["Derivations", "Derivaciones"],
     ["Demonstration", "Demostración"]
   ];
+  tdDemo1 = function () {
+    return $("td").att("nowrap", "true")
+      .att(
+        "style",
+        "background-color: rgb(235, 235, 235);padding:0px;" +
+          "font-family:monospace;font-size: 12px;"
+      );
+  };
+  tdDemo2 = function () {
+    return $("td").att("nowrap", "true")
+      .att(
+        "style",
+        "background-color: rgb(230, 230, 230);padding:0px;" +
+          "font-family:monospace;font-size: 12px;"
+      );
+  };
 
   dmjs.It.from(i18).each(function (e) {
     i18n.get().small.push(e);
@@ -60,25 +77,30 @@ corpus.Panel3 = function (control) {
       "style",
       "width:100%;font-family:monospace;font-size:12px;height:100px;" +
         "resize:none;"
-    )
+    );
   basesNumber = $("span");
   basesArea = $("textarea").att("readOnly", "true").att("wrap", "off")
     .att(
       "style",
       "width:100%;font-family:monospace;font-size:12px;height:100px;" +
         "resize:none;"
-    )
+    );
   derivationNumber = $("span");
   derivationArea = $("textarea").att("readOnly", "true").att("wrap", "off")
     .att(
       "style",
       "width:100%;font-family:monospace;font-size:12px;height:100px;" +
         "resize:none;"
-    )
+    );
+  demonstrationTb = $("table").att("width", "100%")
+    .att(
+      "style",
+      "border-collapse:collapse; border: 1px solid rgb(110,130,150);" +
+        "font-family:monospace;font-size: 12px;"
+    );
 
   /** @return {!dmjs.DomObject} */
   this.panel = function () {
-
     return $("div")
       .add($("table").att("style", "width:100%;")
         .add($("tr")
@@ -106,9 +128,9 @@ corpus.Panel3 = function (control) {
         .add($("tr")
           .add($("td").att("colspan", "5")
             .add($("hr"))))
-
-
-    );
+        .add($("tr")
+          .add($("td").att("colspan", "5")
+            .add(demonstrationTb))));
   };
 
   /** */
@@ -118,7 +140,15 @@ corpus.Panel3 = function (control) {
     ruleArea.text("");
     basesArea.text("");
     derivationArea.text("");
-  }
+    demonstrationTb.removeAll().addIt(
+      dmjs.It.range(2).map(function (n) {
+        if (n) {
+          return $("tr").add(tdDemo1().html("&nbsp;"));
+        }
+        return $("tr").add(tdDemo2().html("&nbsp;"));
+      })
+    );
+  };
 
   /**
    * Sets widgets when a rule is selected
@@ -129,11 +159,11 @@ corpus.Panel3 = function (control) {
       vars,
       corpus,
       entry,
-      rule,
       demo,
       bases,
       derivs,
-      writer;
+      writer,
+      color;
 
     vars = control.vars();
     corpus = vars.corpus;
@@ -141,13 +171,12 @@ corpus.Panel3 = function (control) {
     if (entry === undefined) {
       throw ("Rule '" + id + "' is undefined");
     }
-    rule = entry.rule();
     demo = entry.demo();
     bases = demo.allBases(corpus);
     derivs = corpus.derivations(id);
     writer = new model.PropWriter(vars.conf.readerWriterType);
 
-    ruleArea.text(func.writeRule(writer, rule));
+    ruleArea.text(demo.showRule(writer));
     basesNumber.text(bases.length.toString());
     basesArea.text(
       dmjs.It.from(bases).reduce("", function (seed, id) {
@@ -160,7 +189,33 @@ corpus.Panel3 = function (control) {
         return seed + id + "\n";
       })
     );
-
+    color = true;
+    demonstrationTb.removeAll().addIt(
+      demo.showDemonstration(writer).map(function (e) {
+        if (color) {
+          color = false;
+          return $("tr")
+            .add(tdDemo1().att("width", "5px").html("&nbsp;&nbsp;"))
+            .add(tdDemo1().att("width", "5px")
+              .html(e[0].replace(/\s/g, "&nbsp;")))
+            .add(tdDemo1().att("width", "5px")
+              .html("&nbsp;&nbsp;::&nbsp;&nbsp;"))
+            .add(tdDemo1().text(e[1]));
+        }
+        color = true;
+        return $("tr")
+          .add(tdDemo2().att("width", "5px").html("&nbsp;&nbsp;"))
+          .add(tdDemo2().att("width", "5px")
+            .html(e[0].replace(/\s/g, "&nbsp;")))
+          .add(tdDemo2().att("width", "5px")
+            .html("&nbsp;&nbsp;::&nbsp;&nbsp;"))
+          .add(tdDemo2().text(e[1]));
+      })
+    );
   };
 
+  /** @return {!string} */
+  this.derivationNumber = function () {
+    return derivationNumber.text();
+  };
 };
